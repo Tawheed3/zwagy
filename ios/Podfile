@@ -1,0 +1,12 @@
+platform :ios, '15.0'
+
+# Ignore all warnings from all pods
+inhibit_all_warnings!
+
+target 'Runner' do
+  use_frameworks!
+  use_modular_headers!
+
+  # Pods for Flutter
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+end
