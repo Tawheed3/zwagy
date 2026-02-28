@@ -10,8 +10,8 @@ class TestRecord {
   final double overallScore;
   final String status;
   final Map<String, double> categoryScores;
-  final List<Map<String, dynamic>> strengths; // أفضل 4 فقط
-  final List<Map<String, dynamic>> weaknesses; // أهم 12 فقط
+  final List<Map<String, dynamic>> strengths; // top 4 only
+  final List<Map<String, dynamic>> weaknesses; // top 12 only
   final String advice;
   final Map<String, int> answers;
   final List<String> questions;
@@ -71,7 +71,7 @@ class TestRecord {
     );
   }
 
-  // للعرض في القائمة
+  // for display in list
   String get formattedDate {
     return '${testDate.day}/${testDate.month}/${testDate.year}';
   }

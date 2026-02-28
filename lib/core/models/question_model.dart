@@ -1,5 +1,3 @@
-// lib/core/models/question_model.dart
-
 class Question {
   final String id;
   final String text;
@@ -30,7 +28,7 @@ class Question {
     );
   }
 
-  // ✅ أضف هذه الدالة (المطلوبة)
+  // ✅ add this function (required)
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -72,7 +70,7 @@ class Answer {
     );
   }
 
-  // ✅ أضف هذه الدالة أيضاً
+  // ✅ add this function as well
   Map<String, dynamic> toJson() {
     return {
       'text': text,

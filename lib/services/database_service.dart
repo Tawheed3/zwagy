@@ -46,13 +46,13 @@ class DatabaseService {
     ''');
   }
 
-  // ✅ إضافة سجل جديد
+  // ✅ insert new record
   Future<int> insertRecord(TestRecord record) async {
     Database db = await database;
     return await db.insert('test_records', record.toMap());
   }
 
-  // ✅ جلب كل السجلات (مرتبة من الأحدث للأقدم)
+  // ✅ get all records (sorted newest first)
   Future<List<TestRecord>> getAllRecords() async {
     Database db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
@@ -64,7 +64,7 @@ class DatabaseService {
     });
   }
 
-  // ✅ جلب سجلات شخص معين بالاسم
+  // ✅ get records by name
   Future<List<TestRecord>> getRecordsByName(String name) async {
     Database db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
@@ -78,7 +78,7 @@ class DatabaseService {
     });
   }
 
-  // ✅ جلب سجل معين بالـ id
+  // ✅ get record by id
   Future<TestRecord?> getRecordById(int id) async {
     Database db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
@@ -92,7 +92,7 @@ class DatabaseService {
     return null;
   }
 
-  // ✅ حذف سجل
+  // ✅ delete record
   Future<int> deleteRecord(int id) async {
     Database db = await database;
     return await db.delete(
@@ -102,20 +102,20 @@ class DatabaseService {
     );
   }
 
-  // ✅ حذف كل السجلات
+  // ✅ delete all records
   Future<void> deleteAllRecords() async {
     Database db = await database;
     await db.delete('test_records');
   }
 
-  // ✅ عدد السجلات
+  // ✅ record count
   Future<int> getRecordsCount() async {
     Database db = await database;
     final result = await db.rawQuery('SELECT COUNT(*) FROM test_records');
     return Sqflite.firstIntValue(result) ?? 0;
   }
 
-  // ✅ بحث متقدم (بين تاريخين)
+  // ✅ advanced search (between dates)
   Future<List<TestRecord>> getRecordsBetweenDates(
       DateTime startDate,
       DateTime endDate,

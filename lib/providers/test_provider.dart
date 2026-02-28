@@ -16,10 +16,10 @@ class TestProvider extends ChangeNotifier {
   int _currentIndex = 0;
   bool _isLoading = true;
 
-  // ✅ بيانات المستخدم
+  // ✅ user data
   UserData? _userData;
 
-  // ✅ متغيرات الـ AI
+  // ✅ AI variables
   bool _isAnalyzing = false;
   Map<String, dynamic> _aiAnalysis = {};
 
@@ -31,7 +31,7 @@ class TestProvider extends ChangeNotifier {
     'مهارات التواصل',
   ];
 
-  // Getters
+  // getters
   List<Question> get selectedQuestions => _selectedQuestions;
   Map<String, int> get answers => _answers;
   int get currentIndex => _currentIndex;
@@ -43,11 +43,11 @@ class TestProvider extends ChangeNotifier {
   double get progress => _selectedQuestions.isEmpty ? 0 : (_currentIndex + 1) / _selectedQuestions.length;
   bool get isLoading => _isLoading;
 
-  // ✅ Getters جديدة
+  // ✅ new getters
   UserData? get userData => _userData;
   bool get hasUserData => _userData != null;
 
-  // ✅ Getters للـ AI
+  // ✅ AI getters
   bool get isAnalyzing => _isAnalyzing;
   Map<String, dynamic> get aiAnalysis => _aiAnalysis;
 
@@ -55,7 +55,7 @@ class TestProvider extends ChangeNotifier {
     loadQuestions();
   }
 
-  // ✅ حفظ بيانات المستخدم
+  // ✅ save user data
   void saveUserData({
     required String name,
     required int age,
@@ -256,14 +256,14 @@ class TestProvider extends ChangeNotifier {
     return advice.toString();
   }
 
-  // ✅ حفظ نتيجة الاختبار في قاعدة البيانات (أفضل 4 نقاط قوة وأهم 12 نقطة ضعف)
+  // ✅ save test result to database (top 4 strengths and top 12 weaknesses)
   Future<void> saveTestResult(ResultModel result) async {
     if (_userData == null) return;
 
-    // تحويل الأسئلة لنصوص
+    // convert questions to text
     List<String> questionTexts = _selectedQuestions.map((q) => q.text).toList();
 
-    // الحصول على أفضل 4 نقاط قوة
+    // get top 4 strengths
     List<Map<String, dynamic>> topStrengths = [];
     if (result.detailedStrengths != null) {
       List<Map<String, dynamic>> sorted = List.from(result.detailedStrengths!)
@@ -271,7 +271,7 @@ class TestProvider extends ChangeNotifier {
       topStrengths = sorted.take(4).toList();
     }
 
-    // الحصول على أهم 12 نقطة ضعف
+    // get top 12 weaknesses
     List<Map<String, dynamic>> topWeaknesses = [];
     if (result.detailedWeaknesses != null) {
       List<Map<String, dynamic>> sorted = List.from(result.detailedWeaknesses!)
@@ -288,8 +288,8 @@ class TestProvider extends ChangeNotifier {
       overallScore: result.overallScore,
       status: result.status,
       categoryScores: result.categoryScores,
-      strengths: topStrengths, // ✅ أفضل 4 فقط
-      weaknesses: topWeaknesses, // ✅ أهم 12 فقط
+      strengths: topStrengths, // ✅ top 4 only
+      weaknesses: topWeaknesses, // ✅ top 12 only
       advice: result.advice,
       answers: _answers,
       questions: questionTexts,
@@ -304,7 +304,7 @@ class TestProvider extends ChangeNotifier {
     }
   }
 
-  // ✅ جلب كل السجلات
+  // ✅ get all records
   Future<List<TestRecord>> getAllRecords() async {
     try {
       final dbService = DatabaseService();
@@ -315,7 +315,7 @@ class TestProvider extends ChangeNotifier {
     }
   }
 
-  // ✅ جلب سجلات شخص معين
+  // ✅ get records by name
   Future<List<TestRecord>> getRecordsByName(String name) async {
     try {
       final dbService = DatabaseService();
@@ -326,7 +326,7 @@ class TestProvider extends ChangeNotifier {
     }
   }
 
-  // ✅ حذف سجل
+  // ✅ delete record
   Future<void> deleteRecord(int id) async {
     try {
       final dbService = DatabaseService();

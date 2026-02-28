@@ -64,7 +64,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             builder: (context, authProvider, child) {
               return Column(
                 children: [
-                  // ✅ أيقونة
+                  // ✅ icon
                   Container(
                     width: 80,
                     height: 80,
@@ -80,7 +80,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  // ✅ عنوان
+                  // ✅ title
                   Text(
                     'مرحباً بك',
                     style: GoogleFonts.cairo(
@@ -99,7 +99,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   const SizedBox(height: 30),
 
-                  // ✅ عرض خطأ إن وجد
+                  // ✅ show error if any
                   if (authProvider.errorMessage != null) ...[
                     Container(
                       width: double.infinity,
@@ -121,7 +121,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     const SizedBox(height: 16),
                   ],
 
-                  // ✅ بطاقة إنشاء الحساب
+                  // ✅ sign up card
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
@@ -132,7 +132,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       key: _formKey,
                       child: Column(
                         children: [
-                          // ✅ حقل البريد الإلكتروني
+                          // ✅ email field
                           TextFormField(
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
@@ -158,7 +158,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           const SizedBox(height: 16),
 
-                          // ✅ حقل كلمة المرور
+                          // ✅ password field
                           TextFormField(
                             controller: _passwordController,
                             obscureText: _obscurePassword,
@@ -194,7 +194,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           const SizedBox(height: 16),
 
-                          // ✅ حقل تأكيد كلمة المرور
+                          // ✅ confirm password field
                           TextFormField(
                             controller: _confirmPasswordController,
                             obscureText: _obscureConfirmPassword,
@@ -230,7 +230,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           const SizedBox(height: 24),
 
-                          // ✅ زر إنشاء الحساب
+                          // ✅ sign up button
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(

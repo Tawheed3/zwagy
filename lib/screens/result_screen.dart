@@ -101,7 +101,7 @@ class ResultScreen extends StatelessWidget {
     }
   }
 
-  // ✅ مشاركة كـ PDF فقط (بدون أي أيقونات أو رموز)
+  // ✅ share as PDF only (without icons or symbols)
   Future<void> _shareAsPDF(BuildContext context) async {
     final topStrengths = _getTopStrengths();
     final topWeaknesses = _getTopWeaknesses();
@@ -109,7 +109,7 @@ class ResultScreen extends StatelessWidget {
     try {
       _showLoadingDialog(context);
 
-      // ✅ استخدام الخطوط العربية من assets
+      // ✅ use Arabic fonts from assets
       final fontData = await rootBundle.load('assets/fonts/Amiri-Regular.ttf');
       final fontBoldData = await rootBundle.load('assets/fonts/Amiri-Bold.ttf');
 
@@ -135,7 +135,7 @@ class ResultScreen extends StatelessWidget {
           },
           build: (pw.Context context) {
             return [
-              // النتيجة الرئيسية
+              // main result
               pw.Center(
                 child: pw.Text(
                   '${result.overallScore.toStringAsFixed(1)}% - ${result.status}',
@@ -145,7 +145,7 @@ class ResultScreen extends StatelessWidget {
               ),
               pw.SizedBox(height: 20),
 
-              // نتائج المجالات
+              // category results
               pw.Text(
                 'نتائج المجالات:',
                 style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, font: ttfBold),
@@ -161,7 +161,7 @@ class ResultScreen extends StatelessWidget {
               }).toList(),
               pw.SizedBox(height: 20),
 
-              // نقاط القوة
+              // strengths
               if (topStrengths.isNotEmpty) ...[
                 pw.Text(
                   'نقاط القوة:',
@@ -190,7 +190,7 @@ class ResultScreen extends StatelessWidget {
                 pw.SizedBox(height: 20),
               ],
 
-              // نقاط الضعف
+              // weaknesses
               if (topWeaknesses.isNotEmpty) ...[
                 pw.Text(
                   'نقاط تحتاج تحسين:',
@@ -219,7 +219,7 @@ class ResultScreen extends StatelessWidget {
                 pw.SizedBox(height: 20),
               ],
 
-              // خطة التطوير
+              // development plan
               if (result.developmentPlan != null && result.developmentPlan!.isNotEmpty) ...[
                 pw.Text(
                   'خطة التطوير:',
@@ -237,7 +237,7 @@ class ResultScreen extends StatelessWidget {
                 pw.SizedBox(height: 20),
               ],
 
-              // الملخص
+              // summary
               pw.Text(
                 'الملخص:',
                 style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, font: ttfBold),
@@ -265,7 +265,7 @@ class ResultScreen extends StatelessWidget {
         ),
       );
 
-      // حفظ PDF
+      // save PDF
       final directory = await getTemporaryDirectory();
       final pdfPath = '${directory.path}/result_${DateTime.now().millisecondsSinceEpoch}.pdf';
       final pdfFile = File(pdfPath);
@@ -331,7 +331,7 @@ class ResultScreen extends StatelessWidget {
     return PdfColors.red;
   }
 
-  // ✅ مشاركة PDF فقط (تم إزالة الخيارات الأخرى)
+  // ✅ share PDF only (other options removed)
   void _showShareOptions(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -348,7 +348,7 @@ class ResultScreen extends StatelessWidget {
               style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            // ✅ PDF فقط
+            // ✅ PDF only
             _buildShareOption(
               ctx,
               Icons.picture_as_pdf,
@@ -392,503 +392,503 @@ class ResultScreen extends StatelessWidget {
 
     return
       SafeArea(child:  Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        backgroundColor: Colors.teal,
-        elevation: 0,
-        title: Text(
-          'نتيجتك',
-          style: GoogleFonts.cairo(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+        backgroundColor: Colors.grey[50],
+        appBar: AppBar(
+          backgroundColor: Colors.teal,
+          elevation: 0,
+          title: Text(
+            'نتيجتك',
+            style: GoogleFonts.cairo(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
+            onPressed: () {
+              provider.reset();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const HomeScreen()),
+                    (route) => false,
+              );
+            },
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.save, color: Colors.white, size: 20),
+              onPressed: () => _saveToDatabase(context, provider),
+              tooltip: 'حفظ النتيجة',
+            ),
+            IconButton(
+              icon: const Icon(Icons.picture_as_pdf, color: Colors.white, size: 20), // ✅ PDF icon
+              onPressed: () => _showShareOptions(context),
+            ),
+          ],
         ),
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
-          onPressed: () {
-            provider.reset();
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-                  (route) => false,
-            );
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.save, color: Colors.white, size: 20),
-            onPressed: () => _saveToDatabase(context, provider),
-            tooltip: 'حفظ النتيجة',
-          ),
-          IconButton(
-            icon: const Icon(Icons.picture_as_pdf, color: Colors.white, size: 20), // ✅ أيقونة PDF
-            onPressed: () => _showShareOptions(context),
-          ),
-        ],
-      ),
-      body: SafeArea( // ✅ SafeArea مضمون
-        child: Screenshot(
-          controller: screenshotController,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                // ✅ بطاقة النتيجة الرئيسية
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.teal, Colors.teal.shade300],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
-                    children: [
-                      Icon(_getStatusIcon(), size: 40, color: Colors.white),
-                      const SizedBox(height: 8),
-                      Text(
-                        '${result.overallScore.toStringAsFixed(1)}%',
-                        style: GoogleFonts.cairo(
-                          fontSize: 36,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+        body: SafeArea( // ✅ ensure SafeArea
+          child: Screenshot(
+            controller: screenshotController,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  // ✅ main result card
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.teal, Colors.teal.shade300],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                      const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          result.status,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      children: [
+                        Icon(_getStatusIcon(), size: 40, color: Colors.white),
+                        const SizedBox(height: 8),
+                        Text(
+                          '${result.overallScore.toStringAsFixed(1)}%',
                           style: GoogleFonts.cairo(
-                            fontSize: 14,
+                            fontSize: 36,
                             fontWeight: FontWeight.bold,
-                            color: _getStatusColor(),
+                            color: Colors.white,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                // ✅ تفاصيل المجالات
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'نتائجك في المجالات',
-                        style: GoogleFonts.cairo(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                        const SizedBox(height: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            result.status,
+                            style: GoogleFonts.cairo(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: _getStatusColor(),
+                            ),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 12),
-                      ...result.categoryScores.entries.map((entry) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                flex: 3,
-                                child: Text(
-                                  entry.key,
-                                  style: GoogleFonts.cairo(fontSize: 13),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 5,
-                                child: LinearProgressIndicator(
-                                  value: entry.value / 100,
-                                  backgroundColor: Colors.grey[200],
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    entry.value >= 75 ? Colors.green :
-                                    entry.value >= 50 ? Colors.orange : Colors.red,
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // ✅ category details
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'نتائجك في المجالات',
+                          style: GoogleFonts.cairo(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        ...result.categoryScores.entries.map((entry) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: 3,
+                                  child: Text(
+                                    entry.key,
+                                    style: GoogleFonts.cairo(fontSize: 13),
                                   ),
-                                  minHeight: 6,
                                 ),
-                              ),
+                                Expanded(
+                                  flex: 5,
+                                  child: LinearProgressIndicator(
+                                    value: entry.value / 100,
+                                    backgroundColor: Colors.grey[200],
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      entry.value >= 75 ? Colors.green :
+                                      entry.value >= 50 ? Colors.orange : Colors.red,
+                                    ),
+                                    minHeight: 6,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '${entry.value.toStringAsFixed(0)}%',
+                                  style: GoogleFonts.cairo(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // ✅ strengths
+                  if (topStrengths.isNotEmpty) ...[
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.green.shade200),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.thumb_up, color: Colors.green.shade700, size: 18),
                               const SizedBox(width: 8),
                               Text(
-                                '${entry.value.toStringAsFixed(0)}%',
+                                'نقاط القوة',
                                 style: GoogleFonts.cairo(
-                                  fontSize: 12,
+                                  fontSize: 15,
                                   fontWeight: FontWeight.bold,
+                                  color: Colors.green.shade700,
                                 ),
                               ),
                             ],
                           ),
-                        );
-                      }).toList(),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                // ✅ نقاط القوة
-                if (topStrengths.isNotEmpty) ...[
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.green.shade50,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.green.shade200),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.thumb_up, color: Colors.green.shade700, size: 18),
-                            const SizedBox(width: 8),
-                            Text(
-                              'نقاط القوة',
-                              style: GoogleFonts.cairo(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green.shade700,
+                          const SizedBox(height: 12),
+                          ...topStrengths.asMap().entries.map((entry) {
+                            int index = entry.key;
+                            var item = entry.value;
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 8),
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        ...topStrengths.asMap().entries.map((entry) {
-                          int index = entry.key;
-                          var item = entry.value;
-                          return Container(
-                            margin: const EdgeInsets.only(bottom: 8),
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  width: 20,
-                                  height: 20,
-                                  decoration: BoxDecoration(
-                                    color: Colors.green,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      '${index + 1}',
-                                      style: GoogleFonts.cairo(
-                                        fontSize: 10,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: 20,
+                                    height: 20,
+                                    decoration: BoxDecoration(
+                                      color: Colors.green,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        '${index + 1}',
+                                        style: GoogleFonts.cairo(
+                                          fontSize: 10,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        item['question'] ?? '',
-                                        style: GoogleFonts.cairo(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          item['question'] ?? '',
+                                          style: GoogleFonts.cairo(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        item['advice'] ?? '',
-                                        style: GoogleFonts.cairo(
-                                          fontSize: 12,
-                                          color: Colors.grey[600],
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          item['advice'] ?? '',
+                                          style: GoogleFonts.cairo(
+                                            fontSize: 12,
+                                            color: Colors.grey[600],
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                ],
-
-                // ✅ نقاط الضعف
-                if (topWeaknesses.isNotEmpty) ...[
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.red.shade50,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.red.shade200),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.warning, color: Colors.red.shade700, size: 18),
-                            const SizedBox(width: 8),
-                            Text(
-                              'النقاط التي تحتاج تحسين',
-                              style: GoogleFonts.cairo(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red.shade700,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        ...topWeaknesses.asMap().entries.map((entry) {
-                          int index = entry.key;
-                          var item = entry.value;
-                          return Container(
-                            margin: const EdgeInsets.only(bottom: 8),
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  width: 20,
-                                  height: 20,
-                                  decoration: BoxDecoration(
-                                    color: item['score'] == 1 ? Colors.red : Colors.orange,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      '${index + 1}',
-                                      style: GoogleFonts.cairo(
-                                        fontSize: 10,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      ],
                                     ),
                                   ),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        item['question'] ?? '',
-                                        style: GoogleFonts.cairo(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        '💡 ${item['advice'] ?? ''}',
-                                        style: GoogleFonts.cairo(
-                                          fontSize: 12,
-                                          color: Colors.blue[700],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                ],
-
-                // ✅ خطة التطوير
-                if (result.developmentPlan != null && result.developmentPlan!.isNotEmpty) ...[
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.teal.shade50,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.timeline, color: Colors.teal.shade700, size: 18),
-                            const SizedBox(width: 8),
-                            Text(
-                              'خطة التطوير',
-                              style: GoogleFonts.cairo(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.teal.shade700,
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        ...result.developmentPlan!.asMap().entries.map((entry) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  width: 20,
-                                  height: 20,
-                                  decoration: BoxDecoration(
-                                    color: Colors.teal,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      '${entry.key + 1}',
-                                      style: GoogleFonts.cairo(
-                                        fontSize: 10,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    entry.value,
-                                    style: GoogleFonts.cairo(fontSize: 13),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                ],
-
-                // ✅ ملخص التقييم
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.auto_awesome, color: Colors.teal, size: 18),
-                          const SizedBox(width: 8),
-                          Text(
-                            'ملخص',
-                            style: GoogleFonts.cairo(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                            );
+                          }),
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        result.advice,
-                        style: GoogleFonts.cairo(fontSize: 13, height: 1.4),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+
+                  // ✅ weaknesses
+                  if (topWeaknesses.isNotEmpty) ...[
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.red.shade200),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.warning, color: Colors.red.shade700, size: 18),
+                              const SizedBox(width: 8),
+                              Text(
+                                'النقاط التي تحتاج تحسين',
+                                style: GoogleFonts.cairo(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red.shade700,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          ...topWeaknesses.asMap().entries.map((entry) {
+                            int index = entry.key;
+                            var item = entry.value;
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 8),
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: 20,
+                                    height: 20,
+                                    decoration: BoxDecoration(
+                                      color: item['score'] == 1 ? Colors.red : Colors.orange,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        '${index + 1}',
+                                        style: GoogleFonts.cairo(
+                                          fontSize: 10,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          item['question'] ?? '',
+                                          style: GoogleFonts.cairo(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          '💡 ${item['advice'] ?? ''}',
+                                          style: GoogleFonts.cairo(
+                                            fontSize: 12,
+                                            color: Colors.blue[700],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+
+                  // ✅ development plan
+                  if (result.developmentPlan != null && result.developmentPlan!.isNotEmpty) ...[
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.teal.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.timeline, color: Colors.teal.shade700, size: 18),
+                              const SizedBox(width: 8),
+                              Text(
+                                'خطة التطوير',
+                                style: GoogleFonts.cairo(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.teal.shade700,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          ...result.developmentPlan!.asMap().entries.map((entry) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: 20,
+                                    height: 20,
+                                    decoration: BoxDecoration(
+                                      color: Colors.teal,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        '${entry.key + 1}',
+                                        style: GoogleFonts.cairo(
+                                          fontSize: 10,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      entry.value,
+                                      style: GoogleFonts.cairo(fontSize: 13),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+
+                  // ✅ assessment summary
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.auto_awesome, color: Colors.teal, size: 18),
+                            const SizedBox(width: 8),
+                            Text(
+                              'ملخص',
+                              style: GoogleFonts.cairo(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          result.advice,
+                          style: GoogleFonts.cairo(fontSize: 13, height: 1.4),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // ✅ action buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            _saveToDatabase(context, provider);
+                          },
+                          icon: const Icon(Icons.save, size: 18),
+                          label: Text(
+                            'حفظ',
+                            style: GoogleFonts.cairo(fontSize: 14),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.teal,
+                            side: const BorderSide(color: Colors.teal),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            provider.reset();
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(builder: (context) => const HomeScreen()),
+                                  (route) => false,
+                            );
+                          },
+                          icon: const Icon(Icons.replay, size: 18),
+                          label: Text(
+                            'اختبار جديد',
+                            style: GoogleFonts.cairo(fontSize: 14),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.teal,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                ),
-
-                const SizedBox(height: 20),
-
-                // ✅ أزرار الإجراءات
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          _saveToDatabase(context, provider);
-                        },
-                        icon: const Icon(Icons.save, size: 18),
-                        label: Text(
-                          'حفظ',
-                          style: GoogleFonts.cairo(fontSize: 14),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.teal,
-                          side: const BorderSide(color: Colors.teal),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          provider.reset();
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(builder: (context) => const HomeScreen()),
-                                (route) => false,
-                          );
-                        },
-                        icon: const Icon(Icons.replay, size: 18),
-                        label: Text(
-                          'اختبار جديد',
-                          style: GoogleFonts.cairo(fontSize: 14),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
-      ),
       )
-    );
+      );
   }
 }

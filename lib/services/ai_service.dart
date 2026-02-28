@@ -2,7 +2,7 @@
 
 import 'dart:math';
 import '../core/models/question_model.dart';
-import 'advice_service.dart'; // ✅ استيراد خدمة النصائح
+import 'advice_service.dart'; // ✅ import advice service
 
 class AIService {
 
@@ -12,12 +12,12 @@ class AIService {
     required Map<String, double> categoryScores,
   }) async {
 
-    // حساب النتيجة الإجمالية
+    // calculate overall score
     double totalScore = 0;
     answers.forEach((key, value) => totalScore += value);
     double overallScore = (totalScore / (questions.length * 4)) * 100;
 
-    // تحديد الحالة
+    // determine status
     String status;
     if (overallScore >= 75) {
       status = 'مؤهل للزواج';
@@ -27,7 +27,7 @@ class AIService {
       status = 'غير مؤهل';
     }
 
-    // تحضير نقاط القوة والضعف المفصلة
+    // prepare detailed strengths and weaknesses
     List<Map<String, dynamic>> detailedStrengths = [];
     List<Map<String, dynamic>> detailedWeaknesses = [];
 
@@ -49,7 +49,7 @@ class AIService {
           'score': score,
           'category': question.category,
           'analysis': AdviceService.getStrengthAnalysis(question.text, score),
-          'advice': AdviceService.getAdvice(question.id, score), // ✅ استخدام JSON
+          'advice': AdviceService.getAdvice(question.id, score), // ✅ use JSON
         });
       } else if (score <= 2) {
         detailedWeaknesses.add({
@@ -58,18 +58,18 @@ class AIService {
           'score': score,
           'category': question.category,
           'analysis': AdviceService.getWeaknessAnalysis(question.text, score),
-          'advice': AdviceService.getAdvice(question.id, score), // ✅ استخدام JSON
+          'advice': AdviceService.getAdvice(question.id, score), // ✅ use JSON
         });
       }
     }
 
-    // ترتيب نقاط القوة (الأعلى أولاً)
+    // sort strengths (highest first)
     detailedStrengths.sort((a, b) => (b['score'] ?? 0).compareTo(a['score'] ?? 0));
 
-    // ترتيب نقاط الضعف (الأقل أولاً)
+    // sort weaknesses (lowest first)
     detailedWeaknesses.sort((a, b) => (a['score'] ?? 0).compareTo(b['score'] ?? 0));
 
-    // إنشاء خطة تطوير (أول 3 نقاط ضعف)
+    // create development plan (first 3 weaknesses)
     List<String> developmentPlan = [];
     if (detailedWeaknesses.isNotEmpty) {
       developmentPlan.add('الأسبوع الأول: ركز على تحسين: "${detailedWeaknesses[0]['question']}"');
@@ -81,7 +81,7 @@ class AIService {
       }
     }
 
-    // النصيحة العامة
+    // general advice
     String generalAdvice = AdviceService.getGeneralAdvice(
       detailedStrengths.length,
       detailedWeaknesses.length,

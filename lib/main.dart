@@ -6,17 +6,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'providers/test_provider.dart';
 import 'providers/auth_provider.dart';
 import 'screens/splash_screen.dart';
-import 'services/advice_service.dart'; // ✅ استيراد خدمة النصائح
+import 'services/advice_service.dart'; // ✅ import advice service
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ✅ تهيئة Firebase
+  // ✅ initialize Firebase
   await Firebase.initializeApp();
 
   await AdviceService.loadAdvice();
 
-  // ✅ التحقق من حالة تسجيل الدخول المخزنة (اختياري)
+  // ✅ check stored login state (optional)
   final prefs = await SharedPreferences.getInstance();
   final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
 
@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => TestProvider()),
-        ChangeNotifierProvider(create: (_) => AuthProvider()), // ✅ البروفايدر بيتعامل مع نفسه
+        ChangeNotifierProvider(create: (_) => AuthProvider()), // ✅ provider handles itself
       ],
       child: MaterialApp(
         title: 'بدايتك',

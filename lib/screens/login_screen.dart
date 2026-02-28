@@ -17,7 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
-  bool _isLoginMode = true; // true: تسجيل دخول, false: إنشاء حساب
+  bool _isLoginMode = true; // true: login, false: sign up
 
   @override
   void dispose() {
@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // ✅ أيقونة التطبيق
+                  // ✅ app icon
                   Container(
                     width: 100,
                     height: 100,
@@ -60,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  // ✅ عنوان
+                  // ✅ title
                   Text(
                     'بدايتك',
                     style: GoogleFonts.cairo(
@@ -79,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 30),
 
-                  // ✅ عرض خطأ إن وجد
+                  // ✅ show error if any
                   if (authProvider.errorMessage != null) ...[
                     Container(
                       width: double.infinity,
@@ -101,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 16),
                   ],
 
-                  // ✅ بطاقة تسجيل الدخول
+                  // ✅ login card
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
@@ -119,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       key: _formKey,
                       child: Column(
                         children: [
-                          // ✅ عنوان النموذج
+                          // ✅ form title
                           Text(
                             _isLoginMode ? 'تسجيل الدخول' : 'إنشاء حساب جديد',
                             style: GoogleFonts.cairo(
@@ -130,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           const SizedBox(height: 20),
 
-                          // ✅ حقل البريد الإلكتروني
+                          // ✅ email field
                           TextFormField(
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
@@ -156,7 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           const SizedBox(height: 16),
 
-                          // ✅ حقل كلمة المرور
+                          // ✅ password field
                           TextFormField(
                             controller: _passwordController,
                             obscureText: _obscurePassword,
@@ -191,7 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                           ),
 
-                          // ✅ رابط نسيت كلمة المرور
+                          // ✅ forgot password link
                           if (_isLoginMode) ...[
                             const SizedBox(height: 8),
                             Align(
@@ -213,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                           const SizedBox(height: 20),
 
-                          // ✅ زر تسجيل الدخول / إنشاء حساب
+                          // ✅ login / sign up button
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
@@ -228,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       _passwordController.text,
                                     );
                                   } else {
-                                    // هنفتح شاشة إنشاء حساب منفصلة
+                                    // open separate sign up screen
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -270,7 +270,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 20),
 
-                  // ✅ زر تسجيل الدخول بجوجل
+                  // ✅ google sign in button
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton.icon(
@@ -307,7 +307,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 16),
 
-                  // ✅ رابط التبديل بين الوضعين
+                  // ✅ toggle mode link
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

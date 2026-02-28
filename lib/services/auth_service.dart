@@ -7,7 +7,7 @@ class AuthService {
 
   Stream<User?> get user => _auth.authStateChanges();
 
-  // ========== ✅ تسجيل الدخول بجوجل ==========
+  // ========== ✅ sign in with Google ==========
   Future<User?> signInWithGoogle() async {
     try {
       print('🟡 1. بدء تسجيل الدخول بجوجل');
@@ -56,7 +56,7 @@ class AuthService {
     }
   }
 
-  // ========== ✅ تسجيل الدخول بالبريد الإلكتروني ==========
+  // ========== ✅ sign in with email ==========
   Future<User?> signInWithEmail(String email, String password) async {
     try {
       print('🟡 بدء تسجيل الدخول بالبريد الإلكتروني');
@@ -87,7 +87,7 @@ class AuthService {
     }
   }
 
-  // ========== ✅ إنشاء حساب جديد بالبريد الإلكتروني ==========
+  // ========== ✅ sign up with email ==========
   Future<User?> signUpWithEmail(String email, String password) async {
     try {
       print('🟡 بدء إنشاء حساب جديد');
@@ -118,7 +118,7 @@ class AuthService {
     }
   }
 
-  // ========== ✅ إعادة تعيين كلمة المرور ==========
+  // ========== ✅ reset password ==========
   Future<bool> resetPassword(String email) async {
     try {
       print('🟡 بدء إعادة تعيين كلمة المرور');
@@ -131,7 +131,7 @@ class AuthService {
     }
   }
 
-  // ========== ✅ تسجيل الخروج ==========
+  // ========== ✅ sign out ==========
   Future<void> signOut() async {
     try {
       await _googleSignIn.signOut();
@@ -142,7 +142,7 @@ class AuthService {
     }
   }
 
-  // ========== ✅ معلومات المستخدم ==========
+  // ========== ✅ user info ==========
   User? get currentUser => _auth.currentUser;
   bool get isSignedIn => _auth.currentUser != null;
 }

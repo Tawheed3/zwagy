@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 class AdviceService {
   static Map<String, dynamic> _adviceData = {};
 
-  // ✅ تحميل النصائح من ملف JSON
+  // ✅ load advice from JSON file
   static Future<void> loadAdvice() async {
     try {
       final String response = await rootBundle.loadString('lib/data/advice_data.json');
@@ -14,7 +14,7 @@ class AdviceService {
       _adviceData = data['advice'];
       print('✅ تم تحميل ${_adviceData.length} مفتاح سؤال');
 
-// تحقق من وجود كل الفئات
+// check all categories
       int eCount = 0, rCount = 0, cCount = 0, fCount = 0, tCount = 0;
 
       _adviceData.forEach((key, value) {
@@ -30,13 +30,14 @@ class AdviceService {
       print('  - تحمل المسؤولية (r): $rCount/100');
       print('  - إدارة الخلافات (c): $cCount/100');
       print('  - الاستقلال المالي (f): $fCount/100');
-      print('  - مهارات التواصل (t): $tCount/100');    } catch (e) {
+      print('  - مهارات التواصل (t): $tCount/100');
+    } catch (e) {
       print('❌ خطأ في تحميل النصائح: $e');
       _adviceData = {};
     }
   }
 
-  // ✅ الحصول على النصيحة حسب ID السؤال والدرجة
+  // ✅ get advice by question ID and score
   static String getAdvice(String questionId, int score) {
     if (_adviceData.isEmpty) {
       return 'نصيحة عامة: حاول تحسين هذا الجانب بالتدريب المستمر والممارسة.';
@@ -54,7 +55,7 @@ class AdviceService {
     }
   }
 
-  // ✅ تحليل نقاط القوة
+  // ✅ strength analysis
   static String getStrengthAnalysis(String question, int score) {
     if (score == 4) {
       return 'إجابة ممتازة. هذه المهارة متقدمة لديك وتدل على نضجك في هذا الجانب.';
@@ -63,7 +64,7 @@ class AdviceService {
     }
   }
 
-  // ✅ تحليل نقاط الضعف
+  // ✅ weakness analysis
   static String getWeaknessAnalysis(String question, int score) {
     if (score == 1) {
       return 'هذا الجانب يحتاج تحسين كبير. العمل عليه سيفيدك كثيراً في حياتك وعلاقاتك.';
@@ -72,7 +73,7 @@ class AdviceService {
     }
   }
 
-  // ✅ نصيحة عامة
+  // ✅ general advice
   static String getGeneralAdvice(int strengthsCount, int weaknessesCount, double score) {
     if (score >= 85) {
       return 'أنت في حالة رائعة. حافظ على توازنك وكن قدوة للآخرين.';

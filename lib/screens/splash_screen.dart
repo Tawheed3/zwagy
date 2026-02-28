@@ -21,19 +21,19 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _initializeApp() async {
-    // ✅ انتظر 2 ثانية (للمظهر)
+    // ✅ wait 2 seconds (for appearance)
     await Future.delayed(const Duration(seconds: 2));
 
     if (!mounted) return;
 
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    // ✅ انتظر لحظة إضافية للتأكد من تحميل حالة Firebase
-    // Firebase authStateChanges بياخد وقت
+    // ✅ wait a bit more to ensure Firebase state loads
+    // Firebase authStateChanges takes time
     await Future.delayed(const Duration(milliseconds: 500));
 
     if (authProvider.isLoggedIn) {
-      // ✅ إذا كان مسجل دخول
+      // ✅ if logged in
       if (mounted) {
         Navigator.pushReplacement(
           context,
@@ -41,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
         );
       }
     } else {
-      // ✅ إذا لم يكن مسجل
+      // ✅ if not logged in
       if (mounted) {
         Navigator.pushReplacement(
           context,

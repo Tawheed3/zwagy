@@ -5,14 +5,14 @@ class ResultModel {
   final double overallScore;
   final String status;
   final Map<String, double> categoryScores;
-  final List<String> strengths; // للتوافق مع الكود القديم
-  final List<String> weaknesses; // للتوافق مع الكود القديم
+  final List<String> strengths; // for compatibility with old code
+  final List<String> weaknesses; // for compatibility with old code
   final String advice;
   final DateTime testDate;
   final Map<String, dynamic> rawAnswers;
   final List<Question> questions;
 
-  // ✅ إضافات جديدة من AI
+  // ✅ new additions from AI
   final List<Map<String, dynamic>>? detailedStrengths;
   final List<Map<String, dynamic>>? detailedWeaknesses;
   final List<String>? developmentPlan;
@@ -74,29 +74,29 @@ class ResultModel {
     };
   }
 
-  // ✅ من تحليل AI
+  // ✅ from AI analysis
   factory ResultModel.fromAIAnalysis({
     required Map<String, dynamic> analysis,
     required Map<String, int> rawAnswers,
     required List<Question> questions,
   }) {
-    // استخراج القيم من التحليل
+    // extract values from analysis
     double overallScore = analysis['overallScore']?.toDouble() ?? 0;
     String status = analysis['status'] ?? 'غير محدد';
     Map<String, double> categoryScores = Map<String, double>.from(analysis['categoryScores'] ?? {});
 
-    // نقاط القوة والضعف المبسطة (للتوافق مع الكود القديم)
+    // simplified strengths and weaknesses (for compatibility with old code)
     List<String> strengths = [];
     List<String> weaknesses = [];
 
-    // استخراج النقاط المفصلة
+    // extract detailed points
     List<Map<String, dynamic>>? detailedStrengths;
     List<Map<String, dynamic>>? detailedWeaknesses;
     List<String>? developmentPlan;
 
     if (analysis['detailedStrengths'] != null) {
       detailedStrengths = List<Map<String, dynamic>>.from(analysis['detailedStrengths']);
-      // إضافة النقاط المبسطة
+      // add simplified points
       strengths = detailedStrengths.map((s) => s['question']?.toString() ?? '').toList();
     }
 
@@ -127,21 +127,21 @@ class ResultModel {
     );
   }
 
-  // ✅ لون الحالة
+  // ✅ status color
   Color getStatusColor() {
     if (status.contains('مؤهل للزواج')) return Colors.green;
     if (status.contains('مؤهل جزئياً')) return Colors.orange;
     return Colors.red;
   }
 
-  // ✅ أيقونة الحالة
+  // ✅ status icon
   IconData getStatusIcon() {
     if (status.contains('مؤهل للزواج')) return Icons.emoji_events;
     if (status.contains('مؤهل جزئياً')) return Icons.warning;
     return Icons.error;
   }
 
-  // ✅ وصف مختصر للحالة
+  // ✅ brief status description
   String getStatusDescription() {
     if (status.contains('مؤهل للزواج')) {
       return 'أنت جاهز للزواج، لديك نضج عاطفي واجتماعي جيد';
@@ -152,7 +152,7 @@ class ResultModel {
     }
   }
 
-  // ✅ نصيحة إضافية حسب النتيجة
+  // ✅ additional advice based on result
   String getDetailedAdvice() {
     if (overallScore >= 85) {
       return '🌟 ممتاز! أنت في حالة رائعة. حافظ على توازنك وكن قدوة للآخرين.';
@@ -167,7 +167,7 @@ class ResultModel {
     }
   }
 
-  // ✅ تحليل سريع لأدنى وأعلى قسم
+  // ✅ quick analysis for highest and lowest section
   Map<String, dynamic> getCategoryAnalysis() {
     if (categoryScores.isEmpty) {
       return {
@@ -185,41 +185,41 @@ class ResultModel {
     };
   }
 
-  // ✅ هل النتيجة جيدة؟
+  // ✅ is result good?
   bool get isGood => overallScore >= 75;
 
-  // ✅ هل النتيجة متوسطة؟
+  // ✅ is result average?
   bool get isAverage => overallScore >= 50 && overallScore < 75;
 
-  // ✅ هل النتيجة ضعيفة؟
+  // ✅ is result poor?
   bool get isPoor => overallScore < 50;
 
-  // ✅ تنسيق التاريخ
+  // ✅ formatted date
   String get formattedDate {
     return '${testDate.day}/${testDate.month}/${testDate.year}';
   }
 
-  // ✅ تنسيق التاريخ مع الوقت
+  // ✅ formatted date with time
   String get formattedDateTime {
     return '${testDate.day}/${testDate.month}/${testDate.year} ${testDate.hour}:${testDate.minute.toString().padLeft(2, '0')}';
   }
 
-  // ✅ مقارنة نتيجتين
+  // ✅ compare two results
   bool isBetterThan(ResultModel other) {
     return overallScore > other.overallScore;
   }
 
-  // ✅ الفرق بين نتيجتين
+  // ✅ difference between two results
   double differenceWith(ResultModel other) {
     return (overallScore - other.overallScore).abs();
   }
 
-  // ✅ نص ملخص سريع للنتيجة
+  // ✅ quick summary text
   String get quickSummary {
     return '$formattedDate - $overallScore% - $status';
   }
 
-  // ✅ نص ملخص مع النقاط الرئيسية
+  // ✅ full summary with main points
   String get fullSummary {
     StringBuffer summary = StringBuffer();
     summary.writeln('📊 نتيجة تقييم ${formattedDateTime}');

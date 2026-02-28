@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,34 +8,33 @@ class AuthProvider extends ChangeNotifier {
   User? _user;
   bool _isLoading = false;
   String? _errorMessage;
-  bool _isInitialized = false; // ✅ لمنع التكرار
+  bool _isInitialized = false;
 
   AuthProvider() {
     _initAuth();
   }
 
-  // ✅ تهيئة وتحميل الحالة المخزنة
   Future<void> _initAuth() async {
     if (_isInitialized) return;
 
-    // الاستماع لتغيرات Firebase Auth
+    // listen to Firebase Auth changes
     _authService.user.listen((User? user) {
       _user = user;
-      _saveLoginState(user); // ✅ حفظ الحالة عند التغيير
+      _saveLoginState(user); // ✅ save state on change
       notifyListeners();
     });
 
-    // ✅ استعادة الحالة المخزنة
+    // ✅ restore stored state
     await _restoreLoginState();
     _isInitialized = true;
   }
 
-  // ✅ حفظ حالة تسجيل الدخول في SharedPreferences
+  // ✅ save login state in SharedPreferences
   Future<void> _saveLoginState(User? user) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       if (user != null) {
-        // مستخدم مسجل دخول
+        // user logged in
         await prefs.setBool('isLoggedIn', true);
         await prefs.setString('userId', user.uid);
         await prefs.setString('userEmail', user.email ?? '');
@@ -47,7 +45,7 @@ class AuthProvider extends ChangeNotifier {
           await prefs.setString('userPhoto', user.photoURL!);
         }
       } else {
-        // مستخدم غير مسجل دخول
+        // user logged out
         await prefs.remove('isLoggedIn');
         await prefs.remove('userId');
         await prefs.remove('userEmail');
@@ -55,29 +53,29 @@ class AuthProvider extends ChangeNotifier {
         await prefs.remove('userPhoto');
       }
     } catch (e) {
-      print('❌ خطأ في حفظ حالة تسجيل الدخول: $e');
+      print('❌ error saving login state: $e');
     }
   }
 
-  // ✅ استعادة حالة تسجيل الدخول من SharedPreferences
+  // ✅ restore login state from SharedPreferences
   Future<void> _restoreLoginState() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
 
-      // إذا كان في حالة مخزنة والمستخدم الحالي null
+      // if state is stored and current user is null
       if (isLoggedIn && _user == null) {
-        // هنا ممكن تعمل إعادة اتصال تلقائي مع Firebase إذا احتجت
-        print('🔄 استعادة حالة تسجيل الدخول المخزنة');
-        // اختياري: حاول إعادة تسجيل الدخول تلقائياً
+        // here you can auto-reconnect with Firebase if needed
+        print('🔄 restoring stored login state');
+        // optional: try to auto sign in
         // await _authService.reloadUser();
       }
     } catch (e) {
-      print('❌ خطأ في استعادة حالة تسجيل الدخول: $e');
+      print('❌ error restoring login state: $e');
     }
   }
 
-  // Getters
+  // getters
   User? get user => _user;
   bool get isLoggedIn => _user != null;
   bool get isLoading => _isLoading;
@@ -86,7 +84,7 @@ class AuthProvider extends ChangeNotifier {
   String? get userName => _user?.displayName;
   String? get userPhotoUrl => _user?.photoURL;
 
-  // ✅ تسجيل الدخول بجوجل
+  // ✅ sign in with Google
   Future<bool> signInWithGoogle() async {
     _setLoading(true);
     _clearError();
@@ -94,7 +92,7 @@ class AuthProvider extends ChangeNotifier {
     try {
       final user = await _authService.signInWithGoogle();
       if (user != null) {
-        await _saveLoginState(user); // ✅ حفظ الحالة بعد النجاح
+        await _saveLoginState(user); // ✅ save state after success
       }
       _setLoading(false);
       return user != null;
@@ -105,7 +103,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // ✅ تسجيل الدخول بالبريد الإلكتروني
+  // ✅ sign in with email
   Future<bool> signInWithEmail(String email, String password) async {
     _setLoading(true);
     _clearError();
@@ -119,7 +117,7 @@ class AuthProvider extends ChangeNotifier {
     final user = await _authService.signInWithEmail(email, password);
 
     if (user != null) {
-      await _saveLoginState(user); // ✅ حفظ الحالة بعد النجاح
+      await _saveLoginState(user); // ✅ save state after success
     } else {
       _setError('فشل تسجيل الدخول. تحقق من بياناتك');
     }
@@ -128,12 +126,12 @@ class AuthProvider extends ChangeNotifier {
     return user != null;
   }
 
-  // ✅ إنشاء حساب جديد
+  // ✅ create new account
   Future<bool> signUpWithEmail(String email, String password, String confirmPassword) async {
     _setLoading(true);
     _clearError();
 
-    // التحقق من صحة البيانات
+    // validate data
     if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
       _setError('الرجاء ملء جميع الحقول');
       _setLoading(false);
@@ -155,7 +153,7 @@ class AuthProvider extends ChangeNotifier {
     final user = await _authService.signUpWithEmail(email, password);
 
     if (user != null) {
-      await _saveLoginState(user); // ✅ حفظ الحالة بعد النجاح
+      await _saveLoginState(user); // ✅ save state after success
     } else {
       _setError('فشل إنشاء الحساب. قد يكون البريد مستخدم بالفعل');
     }
@@ -164,7 +162,7 @@ class AuthProvider extends ChangeNotifier {
     return user != null;
   }
 
-  // ✅ إعادة تعيين كلمة المرور
+  // ✅ reset password
   Future<bool> resetPassword(String email) async {
     _setLoading(true);
     _clearError();
@@ -185,11 +183,11 @@ class AuthProvider extends ChangeNotifier {
     return success;
   }
 
-  // ✅ تسجيل الخروج
+  // ✅ sign out
   Future<void> signOut() async {
     _setLoading(true);
     await _authService.signOut();
-    await _saveLoginState(null); // ✅ مسح الحالة المخزنة
+    await _saveLoginState(null); // ✅ clear stored state
     _setLoading(false);
   }
 
@@ -208,7 +206,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ✅ للاستخدام في debug فقط
+  // ✅ for debug only
   void printCurrentState() {
     print('📱 AuthProvider State:');
     print('  - isLoggedIn: $isLoggedIn');

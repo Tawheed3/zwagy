@@ -29,7 +29,7 @@ class _UserDataScreenState extends State<UserDataScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      // حفظ البيانات
+      // save data
       Provider.of<TestProvider>(context, listen: false).saveUserData(
         name: _nameController.text,
         age: int.parse(_ageController.text),
@@ -37,18 +37,18 @@ class _UserDataScreenState extends State<UserDataScreen> {
         phone: _phoneController.text,
       );
 
-      // ✅ عرض شاشة التنبيه قبل بدء الاختبار
+      // ✅ show disclaimer before starting test
       _showDisclaimerDialog();
     }
   }
 
-  // ✅ شاشة التنبيه (Disclaimer)
+  // ✅ disclaimer screen
   void _showDisclaimerDialog() {
     showDialog(
       context: context,
-      barrierDismissible: false, // منع الإغلاق بالضغط خارج الـ dialog
+      barrierDismissible: false, // prevent closing by tapping outside
       builder: (ctx) => WillPopScope(
-        onWillPop: () async => false, // منع زر الرجوع
+        onWillPop: () async => false, // prevent back button
         child: Dialog(
           backgroundColor: Colors.transparent,
           child: Container(
@@ -67,7 +67,7 @@ class _UserDataScreenState extends State<UserDataScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // ✅ أيقونة التنبيه
+                // ✅ warning icon
                 Container(
                   width: 80,
                   height: 80,
@@ -83,7 +83,7 @@ class _UserDataScreenState extends State<UserDataScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // ✅ عنوان التنبيه
+                // ✅ warning title
                 Text(
                   'تنبيه مهم',
                   style: GoogleFonts.cairo(
@@ -94,7 +94,7 @@ class _UserDataScreenState extends State<UserDataScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // ✅ نص التنبيه
+                // ✅ warning text
                 Text(
                   'هذا التطبيق هو أداة تقييم شخصي ترفيهية وتعليمية، ولا يُعتبر بديلاً عن الاستشارة المهنية المتخصصة. النتائج المستخلصة هي لأغراض التوعية والتنمية الذاتية فقط.',
                   textAlign: TextAlign.center,
@@ -117,14 +117,14 @@ class _UserDataScreenState extends State<UserDataScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                // ✅ خياران: موافق على المتابعة أو الخروج
+                // ✅ two options: agree to continue or exit
                 Row(
                   children: [
-                    // زر الخروج
+                    // exit button
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () {
-                          Navigator.pop(ctx); // إغلاق التنبيه فقط
+                          Navigator.pop(ctx); // close disclaimer only
                         },
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.grey,
@@ -142,12 +142,12 @@ class _UserDataScreenState extends State<UserDataScreen> {
                     ),
                     const SizedBox(width: 12),
 
-                    // زر متابعة
+                    // continue button
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.pop(ctx); // إغلاق التنبيه
-                          // الانتقال لشاشة الأسئلة
+                          Navigator.pop(ctx); // close disclaimer
+                          // navigate to questions screen
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
@@ -186,225 +186,225 @@ class _UserDataScreenState extends State<UserDataScreen> {
   Widget build(BuildContext context) {
     return
       SafeArea(child:  Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        backgroundColor: Colors.teal,
-        elevation: 0,
-        title: Text(
-          'بياناتك الشخصية',
-          style: GoogleFonts.cairo(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+        backgroundColor: Colors.grey[50],
+        appBar: AppBar(
+          backgroundColor: Colors.teal,
+          elevation: 0,
+          title: Text(
+            'بياناتك الشخصية',
+            style: GoogleFonts.cairo(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
+            onPressed: () => Navigator.pop(context),
           ),
         ),
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ✅ أيقونة welcome
-              Center(
-                child: Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: Colors.teal.withOpacity(0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.person_outline,
-                    size: 50,
-                    color: Colors.teal,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // ✅ عنوان
-              Center(
-                child: Text(
-                  'مرحباً بك في اختبار التقييم',
-                  style: GoogleFonts.cairo(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Center(
-                child: Text(
-                  'يرجى إدخال بياناتك قبل البدء',
-                  style: GoogleFonts.cairo(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
-
-              // ✅ حقل الاسم
-              Text(
-                'الاسم الكامل',
-                style: GoogleFonts.cairo(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  hintText: 'أدخل اسمك الثلاثي',
-                  prefixIcon: const Icon(Icons.person, color: Colors.teal),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'الرجاء إدخال الاسم';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-
-              // ✅ حقل العمر
-              Text(
-                'العمر',
-                style: GoogleFonts.cairo(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _ageController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  hintText: 'أدخل عمرك',
-                  prefixIcon: const Icon(Icons.cake, color: Colors.teal),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'الرجاء إدخال العمر';
-                  }
-                  final age = int.tryParse(value);
-                  if (age == null) {
-                    return 'الرجاء إدخال رقم صحيح';
-                  }
-                  if (age < 16 || age > 80) {
-                    return 'العمر يجب أن يكون بين 16 و 80 سنة';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-
-              // ✅ حقل العنوان
-              Text(
-                'العنوان',
-                style: GoogleFonts.cairo(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _addressController,
-                decoration: InputDecoration(
-                  hintText: 'أدخل عنوانك',
-                  prefixIcon: const Icon(Icons.location_on, color: Colors.teal),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'الرجاء إدخال العنوان';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-
-              // ✅ حقل رقم الهاتف
-              Text(
-                'رقم الهاتف',
-                style: GoogleFonts.cairo(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _phoneController,
-                keyboardType: TextInputType.phone,
-                decoration: InputDecoration(
-                  hintText: 'أدخل رقم هاتفك',
-                  prefixIcon: const Icon(Icons.phone, color: Colors.teal),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'الرجاء إدخال رقم الهاتف';
-                  }
-                  if (value.length < 10) {
-                    return 'رقم الهاتف غير صحيح';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 30),
-
-              // ✅ زر البدء
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _submitForm,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ✅ welcome icon
+                Center(
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      color: Colors.teal.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.person_outline,
+                      size: 50,
+                      color: Colors.teal,
                     ),
                   ),
+                ),
+                const SizedBox(height: 20),
+
+                // ✅ title
+                Center(
                   child: Text(
-                    'ابدأ الاختبار',
+                    'مرحباً بك في اختبار التقييم',
                     style: GoogleFonts.cairo(
-                      fontSize: 16,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 8),
+                Center(
+                  child: Text(
+                    'يرجى إدخال بياناتك قبل البدء',
+                    style: GoogleFonts.cairo(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 30),
+
+                // ✅ name field
+                Text(
+                  'الاسم الكامل',
+                  style: GoogleFonts.cairo(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    hintText: 'أدخل اسمك الثلاثي',
+                    prefixIcon: const Icon(Icons.person, color: Colors.teal),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'الرجاء إدخال الاسم';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+
+                // ✅ age field
+                Text(
+                  'العمر',
+                  style: GoogleFonts.cairo(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _ageController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    hintText: 'أدخل عمرك',
+                    prefixIcon: const Icon(Icons.cake, color: Colors.teal),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'الرجاء إدخال العمر';
+                    }
+                    final age = int.tryParse(value);
+                    if (age == null) {
+                      return 'الرجاء إدخال رقم صحيح';
+                    }
+                    if (age < 16 || age > 80) {
+                      return 'العمر يجب أن يكون بين 16 و 80 سنة';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+
+                // ✅ address field
+                Text(
+                  'العنوان',
+                  style: GoogleFonts.cairo(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _addressController,
+                  decoration: InputDecoration(
+                    hintText: 'أدخل عنوانك',
+                    prefixIcon: const Icon(Icons.location_on, color: Colors.teal),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'الرجاء إدخال العنوان';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+
+                // ✅ phone field
+                Text(
+                  'رقم الهاتف',
+                  style: GoogleFonts.cairo(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                  decoration: InputDecoration(
+                    hintText: 'أدخل رقم هاتفك',
+                    prefixIcon: const Icon(Icons.phone, color: Colors.teal),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'الرجاء إدخال رقم الهاتف';
+                    }
+                    if (value.length < 10) {
+                      return 'رقم الهاتف غير صحيح';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 30),
+
+                // ✅ start button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _submitForm,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      'ابدأ الاختبار',
+                      style: GoogleFonts.cairo(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
       )
-    );
+      );
   }
 }
