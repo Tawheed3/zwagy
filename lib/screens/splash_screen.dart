@@ -22,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _initializeApp() async {
     // ✅ wait 2 seconds (for appearance)
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 3));
 
     if (!mounted) return;
 
@@ -74,7 +74,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             const SizedBox(height: 20),
             Text(
-              'بدايتك',
+              'بـدايتك',
               style: GoogleFonts.cairo(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,

@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'providers/test_provider.dart';
 import 'providers/auth_provider.dart';
 import 'screens/splash_screen.dart';
-import 'services/advice_service.dart'; // ✅ import advice service
+import 'services/advice_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()), // ✅ provider handles itself
       ],
       child: MaterialApp(
-        title: 'بدايتك',
+        title: 'بـدايتك',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.teal,

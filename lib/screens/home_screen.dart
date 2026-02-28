@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/test_provider.dart';
 import '../providers/auth_provider.dart';
-import 'login_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -22,7 +21,7 @@ class HomeScreen extends StatelessWidget {
           backgroundColor: Colors.teal,
           elevation: 0,
           title: Text(
-            'بدايتك',
+            'بـدايتك',
             style: GoogleFonts.cairo(
               color: Colors.white,
               fontWeight: FontWeight.bold,
