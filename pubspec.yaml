@@ -25,7 +25,6 @@ dependencies:
   hive_flutter: ^1.1.0
 
   dio: ^5.4.0
-
   intl: ^0.20.2
   url_launcher: ^6.2.4
   http: ^1.1.0
@@ -42,24 +41,33 @@ dependencies:
   path_provider: ^2.1.5
   screenshot: ^3.0.0
   pdf: ^3.11.3
-
-
   cupertino_icons: ^1.0.8
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.3
+
+# ✅ إعدادات flutter_launcher_icons
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/applogo.jpeg"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/applogo.jpeg"
+  min_sdk_android: 21
+  remove_alpha_ios: true
+  background_color_ios: "#ffffff"
 
 flutter:
-
   uses-material-design: true
 
   assets:
     - lib/data/questions_complete.json
     - lib/data/advice_data.json
     - assets/fonts/
+    - assets/applogo.jpeg
 
   fonts:
     - family: Amiri

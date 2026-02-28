@@ -44,63 +44,7 @@ class ResultScreen extends StatelessWidget {
     return sorted.take(12).toList();
   }
 
-  Future<void> _saveToDatabase(BuildContext context, TestProvider provider) async {
-    try {
-      await provider.saveTestResult(result);
-
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(Icons.check_circle, color: Colors.white),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    '✅ تم حفظ النتيجة في قاعدة البيانات',
-                    style: GoogleFonts.cairo(fontSize: 14),
-                  ),
-                ),
-              ],
-            ),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 2),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        );
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(Icons.error, color: Colors.white),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    '❌ خطأ في حفظ النتيجة: $e',
-                    style: GoogleFonts.cairo(fontSize: 14),
-                  ),
-                ),
-              ],
-            ),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 3),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        );
-      }
-    }
-  }
-
-  // ✅ share as PDF only (without icons or symbols)
+  // ✅ share as PDF only
   Future<void> _shareAsPDF(BuildContext context) async {
     final topStrengths = _getTopStrengths();
     final topWeaknesses = _getTopWeaknesses();
@@ -324,13 +268,7 @@ class ResultScreen extends StatelessWidget {
     );
   }
 
-  PdfColor _getPdfStatusColor() {
-    if (result.status == 'مؤهل للزواج') return PdfColors.green;
-    if (result.status == 'مؤهل جزئياً') return PdfColors.orange;
-    return PdfColors.red;
-  }
-
-  // ✅ share PDF only (other options removed)
+  // ✅ share PDF only
   void _showShareOptions(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -389,8 +327,8 @@ class ResultScreen extends StatelessWidget {
     final topStrengths = _getTopStrengths();
     final topWeaknesses = _getTopWeaknesses();
 
-    return
-      SafeArea(child:  Scaffold(
+    return SafeArea(
+      child: Scaffold(
         backgroundColor: Colors.grey[50],
         appBar: AppBar(
           backgroundColor: Colors.teal,
@@ -415,25 +353,22 @@ class ResultScreen extends StatelessWidget {
             },
           ),
           actions: [
+            // ✅ PDF only - no save button
             IconButton(
-              icon: const Icon(Icons.save, color: Colors.white, size: 20),
-              onPressed: () => _saveToDatabase(context, provider),
-              tooltip: 'حفظ النتيجة',
-            ),
-            IconButton(
-              icon: const Icon(Icons.picture_as_pdf, color: Colors.white, size: 20), // ✅ PDF icon
+              icon: const Icon(Icons.picture_as_pdf, color: Colors.white, size: 20),
               onPressed: () => _showShareOptions(context),
+              tooltip: 'مشاركة كـ PDF',
             ),
           ],
         ),
-        body: SafeArea( // ✅ ensure SafeArea
+        body: SafeArea(
           child: Screenshot(
             controller: screenshotController,
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  // ✅ main result card
+                  // main result card
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
@@ -479,7 +414,7 @@ class ResultScreen extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  // ✅ category details
+                  // category details
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
@@ -540,7 +475,7 @@ class ResultScreen extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  // ✅ strengths
+                  // strengths
                   if (topStrengths.isNotEmpty) ...[
                     Container(
                       width: double.infinity,
@@ -634,7 +569,7 @@ class ResultScreen extends StatelessWidget {
                     const SizedBox(height: 20),
                   ],
 
-                  // ✅ weaknesses
+                  // weaknesses
                   if (topWeaknesses.isNotEmpty) ...[
                     Container(
                       width: double.infinity,
@@ -728,7 +663,7 @@ class ResultScreen extends StatelessWidget {
                     const SizedBox(height: 20),
                   ],
 
-                  // ✅ development plan
+                  // development plan
                   if (result.developmentPlan != null && result.developmentPlan!.isNotEmpty) ...[
                     Container(
                       width: double.infinity,
@@ -796,7 +731,7 @@ class ResultScreen extends StatelessWidget {
                     const SizedBox(height: 20),
                   ],
 
-                  // ✅ assessment summary
+                  // assessment summary
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
@@ -831,63 +766,39 @@ class ResultScreen extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  // ✅ action buttons
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: () {
-                            _saveToDatabase(context, provider);
-                          },
-                          icon: const Icon(Icons.save, size: 18),
-                          label: Text(
-                            'حفظ',
-                            style: GoogleFonts.cairo(fontSize: 14),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.teal,
-                            side: const BorderSide(color: Colors.teal),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
+                  // ✅ single button - new test only
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        provider.reset();
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => const HomeScreen()),
+                              (route) => false,
+                        );
+                      },
+                      icon: const Icon(Icons.replay, size: 18),
+                      label: Text(
+                        'اختبار جديد',
+                        style: GoogleFonts.cairo(fontSize: 16),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            provider.reset();
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(builder: (context) => const HomeScreen()),
-                                  (route) => false,
-                            );
-                          },
-                          icon: const Icon(Icons.replay, size: 18),
-                          label: Text(
-                            'اختبار جديد',
-                            style: GoogleFonts.cairo(fontSize: 14),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.teal,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ],
               ),
             ),
           ),
         ),
-      )
-      );
+      ),
+    );
   }
 }

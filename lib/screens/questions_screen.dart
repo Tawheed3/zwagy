@@ -28,8 +28,8 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         }
 
         if (provider.selectedQuestions.isEmpty) {
-          return
-            SafeArea(child:  Scaffold(
+          return SafeArea(
+            child: Scaffold(
               body: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -58,14 +58,14 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                   ],
                 ),
               ),
-            )
-            );
+            ),
+          );
         }
 
         var question = provider.currentQuestion;
 
-        return
-          SafeArea(child:  Scaffold(
+        return SafeArea(
+          child: Scaffold(
             backgroundColor: Colors.grey[50],
             appBar: AppBar(
               backgroundColor: Colors.teal,
@@ -338,7 +338,6 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                                 setState(() => _isLoading = false);
                                 return;
                               }
-
                               // show loading indicator
                               showDialog(
                                 context: context,
@@ -379,13 +378,15 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                                   ),
                                 ),
                               );
-
                               try {
-                                // calculate result with AI only (no saving)
+                                // calculate result with AI
                                 var result = await provider.calculateResultWithAI();
 
+                                // ✅ حفظ النتيجة تلقائياً في قاعدة البيانات
+                                await provider.saveTestResult(result);
+
                                 if (context.mounted) {
-                                  Navigator.pop(context); // close loading dialog
+                                  // الانتقال لشاشة النتيجة
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
@@ -442,8 +443,8 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                 ),
               ],
             ),
-          )
-          );
+          ),
+        );
       },
     );
   }

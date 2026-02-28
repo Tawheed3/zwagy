@@ -89,6 +89,14 @@ class _SplashScreenState extends State<SplashScreen> {
                 color: Colors.grey[600],
               ),
             ),
+            const SizedBox(height: 10),
+            Text(
+              'لا تقارن بدايتك بموسم حصاد الاخرين',
+              style: GoogleFonts.cairo(
+                fontSize: 16,
+                color: Colors.grey[600],
+              ),
+            ),
             const SizedBox(height: 30),
             const CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(Colors.teal),

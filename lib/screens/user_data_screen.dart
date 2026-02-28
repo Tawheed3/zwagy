@@ -29,20 +29,24 @@ class _UserDataScreenState extends State<UserDataScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
+      // تنظيف الرقم من أي مسافات أو شرطات وإضافة كود السعودية
+      String cleanNumber = _phoneController.text.replaceAll(RegExp(r'[\s-]'), '');
+      String fullPhoneNumber = '+966$cleanNumber';
+
       // save data
       Provider.of<TestProvider>(context, listen: false).saveUserData(
         name: _nameController.text,
         age: int.parse(_ageController.text),
         address: _addressController.text,
-        phone: _phoneController.text,
+        phone: fullPhoneNumber, // الرقم كامل مع كود الدولة
       );
 
-      // ✅ show disclaimer before starting test
+      // show disclaimer before starting test
       _showDisclaimerDialog();
     }
   }
 
-  // ✅ disclaimer screen
+  // disclaimer screen
   void _showDisclaimerDialog() {
     showDialog(
       context: context,
@@ -67,7 +71,7 @@ class _UserDataScreenState extends State<UserDataScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // ✅ warning icon
+                // warning icon
                 Container(
                   width: 80,
                   height: 80,
@@ -83,7 +87,7 @@ class _UserDataScreenState extends State<UserDataScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // ✅ warning title
+                // warning title
                 Text(
                   'تنبيه مهم',
                   style: GoogleFonts.cairo(
@@ -94,7 +98,7 @@ class _UserDataScreenState extends State<UserDataScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // ✅ warning text
+                // warning text
                 Text(
                   'هذا التطبيق هو أداة تقييم شخصي ترفيهية وتعليمية، ولا يُعتبر بديلاً عن الاستشارة المهنية المتخصصة. النتائج المستخلصة هي لأغراض التوعية والتنمية الذاتية فقط.',
                   textAlign: TextAlign.center,
@@ -117,7 +121,7 @@ class _UserDataScreenState extends State<UserDataScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                // ✅ two options: agree to continue or exit
+                // two options: agree to continue or exit
                 Row(
                   children: [
                     // exit button
@@ -184,8 +188,8 @@ class _UserDataScreenState extends State<UserDataScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return
-      SafeArea(child:  Scaffold(
+    return SafeArea(
+      child: Scaffold(
         backgroundColor: Colors.grey[50],
         appBar: AppBar(
           backgroundColor: Colors.teal,
@@ -210,7 +214,7 @@ class _UserDataScreenState extends State<UserDataScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ✅ welcome icon
+                // welcome icon
                 Center(
                   child: Container(
                     width: 100,
@@ -228,7 +232,7 @@ class _UserDataScreenState extends State<UserDataScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // ✅ title
+                // title
                 Center(
                   child: Text(
                     'مرحباً بك في اختبار التقييم',
@@ -250,7 +254,7 @@ class _UserDataScreenState extends State<UserDataScreen> {
                 ),
                 const SizedBox(height: 30),
 
-                // ✅ name field
+                // name field
                 Text(
                   'الاسم الكامل',
                   style: GoogleFonts.cairo(
@@ -279,7 +283,7 @@ class _UserDataScreenState extends State<UserDataScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // ✅ age field
+                // age field
                 Text(
                   'العمر',
                   style: GoogleFonts.cairo(
@@ -316,7 +320,7 @@ class _UserDataScreenState extends State<UserDataScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // ✅ address field
+                // address field
                 Text(
                   'العنوان',
                   style: GoogleFonts.cairo(
@@ -345,7 +349,7 @@ class _UserDataScreenState extends State<UserDataScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // ✅ phone field
+                // ✅ phone field with Saudi code - الإصدار المحدث (مع إصلاح overflow)
                 Text(
                   'رقم الهاتف',
                   style: GoogleFonts.cairo(
@@ -354,31 +358,86 @@ class _UserDataScreenState extends State<UserDataScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                TextFormField(
-                  controller: _phoneController,
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                    hintText: 'أدخل رقم هاتفك',
-                    prefixIcon: const Icon(Icons.phone, color: Colors.teal),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
+
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'الرجاء إدخال رقم الهاتف';
-                    }
-                    if (value.length < 10) {
-                      return 'رقم الهاتف غير صحيح';
-                    }
-                    return null;
-                  },
+                  child: Row(
+                    children: [
+
+                      Container(
+                        width: 80,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.teal.shade50,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            bottomLeft: Radius.circular(12),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+
+                            const Text(
+                              '🇸🇦',
+                              style: TextStyle(fontSize: 20),
+                            ),
+                            const SizedBox(width: 4),
+                            // ✅ استخدام Flexible لمنع overflow
+                            Flexible(
+                              child: Text(
+                                '+966',
+                                style: GoogleFonts.cairo(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.teal,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      Expanded(
+                        child: TextFormField(
+                          controller: _phoneController,
+                          keyboardType: TextInputType.phone,
+                          textDirection: TextDirection.ltr,
+                          decoration: InputDecoration(
+                            hintText: '5xxxxxxxx',
+                            hintTextDirection: TextDirection.ltr,
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'الرجاء إدخال رقم الهاتف';
+                            }
+
+                            String cleanNumber = value.replaceAll(RegExp(r'[\s-]'), '');
+
+                            RegExp saudiPhoneRegex = RegExp(r'^5[0-9]{8}$');
+
+                            if (!saudiPhoneRegex.hasMatch(cleanNumber)) {
+                              return 'رقم الهاتف غير صحيح (يجب أن يبدأ بـ 5 ويتكون من 9 أرقام)';
+                            }
+
+                            return null;
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+
                 const SizedBox(height: 30),
 
-                // ✅ start button
+                // start button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -404,7 +463,7 @@ class _UserDataScreenState extends State<UserDataScreen> {
             ),
           ),
         ),
-      )
-      );
+      ),
+    );
   }
 }
