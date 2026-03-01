@@ -1,6 +1,6 @@
-import 'package:ai_helper/screens/settings_screen.dart';
-import 'package:ai_helper/screens/user_data_screen.dart';
-import 'package:ai_helper/screens/records_screen.dart';
+import 'package:bidaytak/screens/settings_screen.dart';
+import 'package:bidaytak/screens/user_data_screen.dart';
+import 'package:bidaytak/screens/records_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
