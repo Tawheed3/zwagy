@@ -1,4 +1,4 @@
-package com.example.ai_helper
+package com.bidayatik.app
 
 import io.flutter.embedding.android.FlutterActivity
 

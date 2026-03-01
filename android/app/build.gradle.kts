@@ -11,7 +11,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.ai_helper"
+    namespace = "com.bidayatik.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -27,7 +27,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.ai_helper"
+        applicationId = "com.bidayatik.app"
         // ✅ 2. يجب أن يكون minSdk = 21 وليس flutter.minSdkVersion
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
