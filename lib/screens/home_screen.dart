@@ -14,8 +14,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
 
-    return
-      SafeArea(child:  Scaffold(
+    return Scaffold(
         backgroundColor: Colors.grey[50],
         appBar: AppBar(
           backgroundColor: Colors.teal,
@@ -40,11 +39,9 @@ class HomeScreen extends StatelessWidget {
                 );
               },
             ),
-
           ],
         ),
-        body: SafeArea(
-          child: Padding(
+        body: SingleChildScrollView(  // ✅ الـ Scroll بقى على الصفحة كلها
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,6 +69,8 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 40),
+
+                // ✅ الكارد الأساسي
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
@@ -147,7 +146,9 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+
                 const SizedBox(height: 30),
+
                 Text(
                   'المجالات التي نقيسها:',
                   style: GoogleFonts.cairo(
@@ -156,26 +157,29 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 15),
-                Expanded(
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    children: [
-                      _buildCategoryCard('النضج العاطفي', Icons.favorite, Colors.red),
-                      _buildCategoryCard('تحمل المسؤولية', Icons.handshake, Colors.blue),
-                      _buildCategoryCard('إدارة الخلافات', Icons.balance, Colors.orange),
-                      _buildCategoryCard('الاستقلال المالي', Icons.attach_money, Colors.green),
-                      _buildCategoryCard('مهارات التواصل', Icons.chat, Colors.purple),
-                    ],
-                  ),
+
+                // ✅ الـ GridView بقى بدون Expanded
+                GridView.count(
+                  shrinkWrap: true,           // ✅ يخليه ياخد المساحة اللي محتاجها بس
+                  physics: const NeverScrollableScrollPhysics(), // ✅ يمنع Scroll جوه GridView
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 1.2,      // ✅ يتحكم في ارتفاع الكروت
+                  children: [
+                    _buildCategoryCard('النضج العاطفي', Icons.favorite, Colors.red),
+                    _buildCategoryCard('تحمل المسؤولية', Icons.handshake, Colors.blue),
+                    _buildCategoryCard('إدارة الخلافات', Icons.balance, Colors.orange),
+                    _buildCategoryCard('الاستقلال المالي', Icons.attach_money, Colors.green),
+                    _buildCategoryCard('مهارات التواصل', Icons.chat, Colors.purple),
+                  ],
                 ),
+
+                const SizedBox(height: 20), // ✅ مسافة في الآخر
               ],
             ),
           ),
-        ),
-      )
-      );
+    );
   }
 
   Widget _buildCategoryCard(String title, IconData icon, Color color) {

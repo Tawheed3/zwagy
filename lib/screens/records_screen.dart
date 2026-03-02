@@ -59,8 +59,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return
-      SafeArea(child:  Scaffold(
+    return Scaffold(
         backgroundColor: Colors.grey[50],
         appBar: AppBar(
           backgroundColor: Colors.teal,
@@ -248,7 +247,6 @@ class _RecordsScreenState extends State<RecordsScreen> {
             ),
           ],
         ),
-      )
       );
   }
 }

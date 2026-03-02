@@ -1,9 +1,28 @@
-# Miscellaneous
+# Flutter/Dart/Pub
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+ /coverage/
+
+# Android Studio/IDE
+*.iml
+*.ipr
+*.iws
+.idea/
+.vscode/
+
+# System
 *.class
 *.log
 *.pyc
 *.swp
 .DS_Store
+
+# Misc
 .atom/
 .build/
 .buildlog/
@@ -12,36 +31,10 @@
 .swiftpm/
 migrate_working_dir/
 
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
-.idea/
-
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
-
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
-.dart_tool/
-.flutter-plugins-dependencies
-.pub-cache/
-.pub/
-/build/
-/coverage/
-
-# Symbolication related
+# Symbolication/Obfuscation
 app.*.symbols
-
-# Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
-android/app/google-services.json
-ios/Runner/GoogleService-Info.plist
+# Firebase - رفعها بالقوة لو محتاج build على Mac
+# android/app/google-services.json
+# ios/Runner/GoogleService-Info.plist
