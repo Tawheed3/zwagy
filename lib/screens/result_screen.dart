@@ -216,10 +216,14 @@ class ResultScreen extends StatelessWidget {
 
       if (context.mounted) {
         Navigator.pop(context);
+        final box = context.findRenderObject() as RenderBox?;
         await Share.shareXFiles(
           [XFile(pdfPath)],
           subject: 'نتيجة اختبار بدايتك',
           text: 'نتيجتي في تطبيق بدايتك',
+          sharePositionOrigin: box != null
+              ? box.localToGlobal(Offset.zero) & box.size
+              : const Rect.fromLTWH(0, 0, 100, 100),
         );
       }
     } catch (e) {
