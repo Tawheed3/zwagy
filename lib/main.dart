@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'firebase_options.dart';
 import 'providers/test_provider.dart';
 import 'providers/auth_provider.dart';
 import 'screens/splash_screen.dart';
@@ -12,7 +13,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // ✅ initialize Firebase
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   await AdviceService.loadAdvice();
 
