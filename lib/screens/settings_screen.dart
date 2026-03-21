@@ -1,3 +1,4 @@
+// lib/screens/settings_screen.dart
 
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -23,7 +24,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _showContact = false;
   bool _isExpanded = false;
   bool _notificationsEnabled = true;
-
 
   File? _profileImage;
 
@@ -69,15 +69,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final notificationService = NotificationService();
 
     if (value) {
-      // تفعيل الإشعارات - جدولة تذكيرات مستقبلية
+      // تفعيل الإشعارات
       try {
-        // التحقق من الصلاحية
         final hasPermission = await notificationService.isPermissionGranted();
         if (!hasPermission) {
-          // طلب الصلاحية
           await notificationService.openSettings();
-
-          // نعطي المستخدم رسالة
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -99,7 +95,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                '✅ تم تفعيل التذكيرات كل 3 أيام',
+                '✅ تم تفعيل الاشعارات',
                 style: GoogleFonts.cairo(),
               ),
               backgroundColor: Colors.green,
@@ -125,7 +121,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       // إلغاء الإشعارات
       try {
         await notificationService.cancelAllNotifications();
-
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -144,14 +139,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  // تحميل الصورة المحفوظة - معدلة لربطها بمعرّف المستخدم
   Future<void> _loadSavedImage() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final userId = authProvider.user?.uid ?? 'default';
 
-      // استخدام userId في المفتاح
       final imagePath = prefs.getString('profile_image_$userId');
 
       print('📂 محاولة تحميل الصورة للمستخدم $userId من: $imagePath');
@@ -175,14 +168,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  // حفظ مسار الصورة - معدلة لربطها بمعرّف المستخدم
   Future<void> _saveImagePath(String path) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final userId = authProvider.user?.uid ?? 'default';
 
-      // استخدام userId في المفتاح
       await prefs.setString('profile_image_$userId', path);
       print('✅ تم حفظ مسار الصورة للمستخدم $userId: $path');
     } catch (e) {
@@ -190,19 +181,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  // اختيار الصورة من المعرض
   Future<void> _pickImage() async {
     print('🟡 بدأ اختيار الصورة');
 
     try {
-      // طلب الصلاحية أولاً (لـ Android 13+)
       final picker = ImagePicker();
 
       print('🟡 فتح المعرض...');
 
       final XFile? pickedFile = await picker.pickImage(
         source: ImageSource.gallery,
-        maxWidth: 500,  // حجم مناسب للصورة الشخصية
+        maxWidth: 500,
         maxHeight: 500,
         imageQuality: 80,
       ).timeout(
@@ -220,13 +209,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
       print('✅ تم اختيار الصورة: ${pickedFile.path}');
 
-      // التحقق من الملف
       final tempFile = File(pickedFile.path);
       if (!await tempFile.exists()) {
         throw Exception('الملف المختار غير موجود');
       }
 
-      // إنشاء مجلد للصور إذا لم يكن موجوداً
       final appDir = await getApplicationDocumentsDirectory();
       final imagesDir = Directory('${appDir.path}/profile_images');
 
@@ -235,23 +222,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
         print('📁 تم إنشاء مجلد الصور');
       }
 
-      // إنشاء اسم فريد للصورة
       final fileName = 'profile_${DateTime.now().millisecondsSinceEpoch}.jpg';
       final savedPath = '${imagesDir.path}/$fileName';
 
-      // نسخ الصورة إلى مجلد التطبيق
       final savedImage = await tempFile.copy(savedPath);
       print('✅ تم نسخ الصورة إلى: $savedPath');
 
-      // تحديث الحالة
       setState(() {
         _profileImage = savedImage;
       });
 
-      // حفظ المسار (معدل لربطه بمعرّف المستخدم)
       await _saveImagePath(savedPath);
 
-      // عرض رسالة نجاح
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -296,11 +278,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  // حذف الصورة
   Future<void> _deleteImage() async {
     print('🟡 بدأ حذف الصورة');
 
-    // عرض مربع حوار للتأكيد
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -338,13 +318,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (confirm != true) return;
 
     try {
-      // حذف الملف الفعلي إذا كان موجوداً
       if (_profileImage != null && await _profileImage!.exists()) {
         await _profileImage!.delete();
         print('✅ تم حذف ملف الصورة');
       }
 
-      // حذف المسار من SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final userId = authProvider.user?.uid ?? 'default';
@@ -352,12 +330,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       await prefs.remove('profile_image_$userId');
       print('✅ تم حذف مسار الصورة للمستخدم $userId');
 
-      // تحديث الحالة
       setState(() {
         _profileImage = null;
       });
 
-      // عرض رسالة نجاح
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -392,7 +368,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  // إظهار قائمة الخيارات للصورة
   void _showImageOptions() {
     showModalBottomSheet(
       context: context,
@@ -402,7 +377,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       builder: (ctx) => SafeArea(
         child: Wrap(
           children: [
-            // عنوان
             Padding(
               padding: const EdgeInsets.all(16),
               child: Center(
@@ -418,7 +392,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             const Divider(height: 1),
 
-            // تغيير الصورة
             ListTile(
               leading: Container(
                 padding: const EdgeInsets.all(8),
@@ -438,7 +411,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
 
-            // حذف الصورة (يظهر فقط إذا كانت هناك صورة)
             if (_profileImage != null || _hasFirebaseImage()) ...[
               ListTile(
                 leading: Container(
@@ -460,7 +432,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ],
 
-            // إلغاء
             ListTile(
               leading: Container(
                 padding: const EdgeInsets.all(8),
@@ -482,7 +453,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // التحقق من وجود صورة من Firebase
   bool _hasFirebaseImage() {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     return authProvider.userPhotoUrl != null && authProvider.userPhotoUrl!.isNotEmpty;
@@ -516,15 +486,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: Column(
             children: [
               _buildProfileCard(authProvider),
+              const SizedBox(height: 16),
+
+              // ✅ زر الإشعارات مباشرة بعد الـ Profile
+              _buildNotificationSection(),
+
               const SizedBox(height: 20),
               _buildAboutSection(),
               const SizedBox(height: 8),
               _buildContactSection(),
-              const SizedBox(height: 20),
-
-              // ✅ زر الإشعارات (بدون تجربة)
-              _buildNotificationSection(),
-
               const SizedBox(height: 20),
               _buildLogoutButton(authProvider),
               const SizedBox(height: 20),
@@ -535,7 +505,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // بطاقة الملف الشخصي
   Widget _buildProfileCard(AuthProvider authProvider) {
     return Container(
       width: double.infinity,
@@ -553,13 +522,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       child: Column(
         children: [
-          // الصورة مع قائمة الخيارات عند الضغط عليها
           GestureDetector(
             onTap: _showImageOptions,
             child: Stack(
               clipBehavior: Clip.none,
               children: [
-                // إطار الصورة
                 Container(
                   width: 120,
                   height: 120,
@@ -581,8 +548,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     child: _buildProfileImage(authProvider),
                   ),
                 ),
-
-                // زر القائمة (ثلاث نقاط)
                 Positioned(
                   bottom: 0,
                   right: 0,
@@ -610,10 +575,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
           ),
-
           const SizedBox(height: 20),
-
-          // اسم المستخدم
           Text(
             authProvider.userName ?? 'مستخدم',
             style: GoogleFonts.cairo(
@@ -622,10 +584,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               color: Colors.teal.shade800,
             ),
           ),
-
           const SizedBox(height: 4),
-
-          // البريد الإلكتروني
           Text(
             authProvider.userEmail ?? 'example@email.com',
             style: GoogleFonts.cairo(
@@ -638,9 +597,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // بناء الصورة المناسبة
   Widget _buildProfileImage(AuthProvider authProvider) {
-    // إذا كانت هناك صورة محلية
     if (_profileImage != null) {
       return Image.file(
         _profileImage!,
@@ -652,10 +609,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           return _buildInitialImage(authProvider);
         },
       );
-    }
-
-    // إذا كانت هناك صورة من Firebase
-    else if (authProvider.userPhotoUrl != null && authProvider.userPhotoUrl!.isNotEmpty) {
+    } else if (authProvider.userPhotoUrl != null && authProvider.userPhotoUrl!.isNotEmpty) {
       return Image.network(
         authProvider.userPhotoUrl!,
         fit: BoxFit.cover,
@@ -668,8 +622,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Center(
               child: CircularProgressIndicator(
                 value: loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded /
-                    loadingProgress.expectedTotalBytes!
+                    ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
                     : null,
                 color: Colors.teal,
               ),
@@ -681,21 +634,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
           return _buildInitialImage(authProvider);
         },
       );
-    }
-
-    // الصورة الافتراضية
-    else {
+    } else {
       return _buildInitialImage(authProvider);
     }
   }
 
-  // الصورة الافتراضية (أول حرف من الاسم)
   Widget _buildInitialImage(AuthProvider authProvider) {
     String initial = 'U';
     if (authProvider.userName != null && authProvider.userName!.isNotEmpty) {
       initial = authProvider.userName![0].toUpperCase();
     }
-
     return Container(
       color: Colors.teal.shade100,
       child: Center(
@@ -711,68 +659,62 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // ✅ قسم الإشعارات (بدون تجربة)
+  // ✅ قسم الإشعارات (يظهر مباشرة بعد الـ Profile)
   Widget _buildNotificationSection() {
-    return Column(
-      children: [
-        _buildSectionHeader(
-          icon: Icons.notifications_active,
-          title: 'الإشعارات',
-          color: Colors.blue,
-          isExpanded: true,
-        ),
-        const SizedBox(height: 8),
-
-        Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.blue.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              _notificationsEnabled ? Icons.notifications_active : Icons.notifications_off,
+              color: _notificationsEnabled ? Colors.blue : Colors.grey,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // زر تفعيل/إلغاء الإشعارات
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      _notificationsEnabled ? Icons.notifications_active : Icons.notifications_off,
-                      color: _notificationsEnabled ? Colors.blue : Colors.grey,
-                    ),
-                  ),
-                  title: Text(
-                    'التذكيرات',
-                    style: GoogleFonts.cairo(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-
-
-                  trailing: Switch(
-                    value: _notificationsEnabled,
-                    onChanged: _toggleNotifications,
-                    activeColor: Colors.blue,
-                    activeTrackColor: Colors.blue.shade200,
+                Text(
+                  'الاشعارات',
+                  style: GoogleFonts.cairo(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-
 
               ],
             ),
           ),
-        ),
-      ],
+          Switch(
+            value: _notificationsEnabled,
+            onChanged: _toggleNotifications,
+            activeColor: Colors.blue,
+            activeTrackColor: Colors.blue.shade200,
+          ),
+        ],
+      ),
     );
   }
 
-  // قسم "عن التطبيق"
   Widget _buildAboutSection() {
     return Column(
       children: [
@@ -802,7 +744,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // اسم المدرسة
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
@@ -831,8 +772,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-
-                  // قائمة الطالبات المشاركات
                   Text(
                     '👩‍🎓 الطالبات المشاركات:',
                     style: GoogleFonts.cairo(
@@ -842,8 +781,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
-
-                  // زر إظهار/إخفاء الأسماء
                   GestureDetector(
                     onTap: () {
                       setState(() {
@@ -879,8 +816,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                   ),
-
-                  // أسماء الطالبات
                   if (_isExpanded) ...[
                     const SizedBox(height: 12),
                     _buildStudentCard('غيداء القرشي'),
@@ -890,8 +825,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     _buildStudentCard('سجى القرني'),
                   ],
                   const SizedBox(height: 12),
-
-                  // وصف التطبيق
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
@@ -939,7 +872,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // بطاقة الطالبة
   Widget _buildStudentCard(String name) {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -970,7 +902,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // قسم اتصل بنا
   Widget _buildContactSection() {
     return Column(
       children: [
@@ -1015,7 +946,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // عنصر الاتصال
   Widget _buildContactTile({
     required IconData icon,
     required Color iconColor,
@@ -1049,7 +979,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // رأس القسم
   Widget _buildSectionHeader({
     required IconData icon,
     required String title,
@@ -1082,18 +1011,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const Spacer(),
-          if (title != 'الإشعارات') // الإشعارات لا تحتوي على سهم توسيع
-            Icon(
-              isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-              color: Colors.grey.shade400,
-              size: 20,
-            ),
+          Icon(
+            isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+            color: Colors.grey.shade400,
+            size: 20,
+          ),
         ],
       ),
     );
   }
 
-  // زر تسجيل الخروج
   Widget _buildLogoutButton(AuthProvider authProvider) {
     return Container(
       width: double.infinity,
@@ -1122,7 +1049,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // حوار تسجيل الخروج
   void _showLogoutDialog(BuildContext context, AuthProvider authProvider) {
     showDialog(
       context: context,
@@ -1145,7 +1071,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           ElevatedButton(
             onPressed: () async {
-              // إلغاء الإشعارات عند تسجيل الخروج
               try {
                 final notificationService = NotificationService();
                 await notificationService.cancelAllNotifications();
@@ -1177,7 +1102,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // فتح البريد الإلكتروني
   Future<void> _launchEmail(String email) async {
     final Uri uri = Uri.parse('mailto:$email?subject=استفسار&body=مرحباً');
     try {
