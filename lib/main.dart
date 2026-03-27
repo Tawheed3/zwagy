@@ -10,7 +10,7 @@ import 'providers/test_provider.dart';
 import 'providers/auth_provider.dart';
 import 'screens/splash_screen.dart';
 import 'services/advice_service.dart';
-import 'services/notification_service.dart'; // ✅ إضافة خدمة الإشعارات
+import 'services/push_notification_service.dart';
 import 'core/utils/navigator_key.dart';
 
 void main() async {
@@ -22,8 +22,8 @@ void main() async {
   );
 
   // ✅ تهيئة الإشعارات
-  final notificationService = NotificationService();
-  await notificationService.init();
+  final pushNotificationService = PushNotificationService();
+  await pushNotificationService.init();
 
   await AdviceService.loadAdvice();
 

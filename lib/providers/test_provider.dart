@@ -13,7 +13,7 @@ import '../core/utils/navigator_key.dart';
 import '../providers/auth_provider.dart';
 import '../services/ai_service.dart';
 import '../services/database_service.dart';
-import '../services/notification_service.dart';
+import '../services/push_notification_service.dart';
 
 class TestProvider extends ChangeNotifier {
   List<Question> _allQuestions = [];
@@ -263,7 +263,7 @@ class TestProvider extends ChangeNotifier {
     return advice.toString();
   }
 
-  // ✅ حفظ نتيجة الاختبار مع userId وجدولة تذكير
+  // ✅ حفظ نتيجة الاختبار مع userId
   Future<void> saveTestResult(ResultModel result) async {
     if (_userData == null) return;
 
@@ -313,26 +313,8 @@ class TestProvider extends ChangeNotifier {
       final dbService = DatabaseService();
       int id = await dbService.insertRecord(record);
       print('✅ تم حفظ السجل للمستخدم $userId بالرقم: $id');
-
-      // ✅ جدولة تذكير بعد 3 أيام
-      if (id > 0) {
-        final notificationService = NotificationService();
-        await notificationService.cancelAllNotifications(); // إلغاء أي تذكيرات سابقة
-        await notificationService.scheduleThreeDayReminder(record);
-      }
     } catch (e) {
       print('❌ خطأ في حفظ السجل: $e');
-    }
-  }
-
-  // ✅ تشغيل الإشعارات المتكررة كل 3 أيام
-  Future<void> startRecurringReminders() async {
-    try {
-      final notificationService = NotificationService();
-      await notificationService.startRecurringReminders();
-      print('✅ تم تشغيل الإشعارات المتكررة كل 3 أيام');
-    } catch (e) {
-      print('❌ خطأ في تشغيل الإشعارات المتكررة: $e');
     }
   }
 
@@ -381,6 +363,77 @@ class TestProvider extends ChangeNotifier {
       print('✅ تم حذف السجل رقم: $id للمستخدم $userId');
     } catch (e) {
       print('❌ خطأ في حذف السجل: $e');
+    }
+  }
+
+  // ✅ جلب آخر نتيجة للمستخدم
+  Future<TestRecord?> getLastUserResult() async {
+    try {
+      final authProvider = Provider.of<AuthProvider>(navigatorKey.currentContext!, listen: false);
+      final userId = authProvider.user?.uid ?? '';
+
+      if (userId.isEmpty) return null;
+
+      final dbService = DatabaseService();
+      final records = await dbService.getRecordsByUserId(userId);
+
+      if (records.isNotEmpty) {
+        return records.first; // آخر نتيجة
+      }
+      return null;
+    } catch (e) {
+      print('❌ خطأ في جلب آخر نتيجة: $e');
+      return null;
+    }
+  }
+
+  // في test_provider.dart
+  Future<void> sendNotificationToAllUsers() async {
+    print('🟡 TestProvider: بدأ إرسال الإشعارات');
+    try {
+      final lastResult = await getLastUserResult();
+      print('🟡 آخر نتيجة: ${lastResult?.overallScore}');
+
+      final notificationService = PushNotificationService();
+
+      String title;
+      String body;
+
+      if (lastResult != null) {
+        final score = lastResult.overallScore.toStringAsFixed(1);
+
+        if (lastResult.overallScore >= 75) {
+          title = '🌟 حافظ على تميزك';
+          body = 'نتيجتك السابقة $score%. اختبر نفسك مرة أخرى لتتأكد من تطورك!';
+        } else if (lastResult.overallScore >= 50) {
+          title = '📈 تقدم مستمر';
+          body = 'نتيجتك السابقة $score%. حان الوقت لتحسين مستواك بإعادة الاختبار!';
+        } else {
+          title = '💪 ابدأ رحلتك';
+          body = 'نتيجتك السابقة $score%. لا تيأس، التغيير يبدأ بخطوة. جرب الاختبار مرة أخرى!';
+        }
+      } else {
+        title = '📊 اكتشف استعدادك للزواج';
+        body = 'لم تقم بإجراء الاختبار بعد. جربه الآن لتعرف مدى استعدادك!';
+      }
+
+      print('🟡 العنوان: $title');
+      print('🟡 المحتوى: $body');
+
+      await notificationService.sendNotificationToAllUsers(
+        title: title,
+        body: body,
+        data: {
+          'type': 'reminder',
+          'hasTest': lastResult != null ? 'true' : 'false',
+          'score': lastResult?.overallScore.toString() ?? '0',
+        },
+      );
+
+      print('🟢 TestProvider: تم إرسال الإشعار بنجاح');
+    } catch (e) {
+      print('🔴 TestProvider: خطأ في إرسال الإشعار: $e');
+      throw e;
     }
   }
 
